@@ -10,10 +10,8 @@ message MessageRequest {
 }
 
 message MessageResponse {
-    string greeting = 1;
 }
 
 service MessageService {
-    rpc greeting(MessageRequest) returns (MessageResponse);
     rpc chat(stream MessageRequest) returns (stream MessageRequest);
 }

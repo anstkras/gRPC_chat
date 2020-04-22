@@ -16,7 +16,7 @@ public class MyClient {
     private StreamObserver<MessageRequest> chat;
     private String username;
 
-    public MyClient(int port, String ipAddress, String username, Callable<MessageRequest> gotMessage) {
+    public MyClient(int port, String ipAddress, String username, MyClientUI parent) {
         this.username = username;
         ManagedChannel channel = ManagedChannelBuilder.forAddress(ipAddress, port)
                 .usePlaintext()
@@ -29,7 +29,12 @@ public class MyClient {
                 new StreamObserver<>() {
                     @Override
                     public void onNext(MessageRequest note) {
-//                        Platform.runLater();
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                parent.addMessage(note.getName(), "", note.getText()));
+                            }
+                        });
                     }
 
                     @Override

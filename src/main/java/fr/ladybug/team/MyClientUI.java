@@ -15,8 +15,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 
 public class MyClientUI extends Application {
     private static final int BASE_SCREEN_WIDTH = 200;
@@ -25,13 +23,10 @@ public class MyClientUI extends Application {
     private static final int MIN_SCREEN_WIDTH = 100;
 
     private MyClient client;
-    private static MyServer myServer;
+    private MyServer server;
     private ObservableList<Object> dataSupplier;
 
     public static void main(String[] args) {
-        if (args.length == 2) { // we are server
-            myServer = new MyServer(Integer.parseInt(args[0]), args[1]);
-        }
         launch(args);
     }
 
@@ -42,8 +37,8 @@ public class MyClientUI extends Application {
     public void sendMessage(String message) {
         if (client != null) {
             client.sendMessage(message);
-        } else if (myServer != null) {
-            myServer.sendMessage(message);
+        } else if (server != null) {
+            server.sendMessage(message);
         }
     }
 
@@ -54,7 +49,16 @@ public class MyClientUI extends Application {
         remoteAddressSupplier.setHeaderText("Enter address and port");
         remoteAddressSupplier.setContentText("Please either address:port or port");
 
-        MyClient getClient;
+        TextInputDialog remoteNameSupplier = new TextInputDialog("Your Name");
+        remoteNameSupplier.setTitle("Messenger");
+        remoteNameSupplier.setHeaderText("Enter name");
+        remoteNameSupplier.setContentText("Please enter your name");
+        String name = "";
+        var result2 = remoteNameSupplier.showAndWait();
+        if (result2.isPresent()) {
+            name = result2.get();
+        }
+
         while (true) {
             var result = remoteAddressSupplier.showAndWait();
 
@@ -65,15 +69,16 @@ public class MyClientUI extends Application {
 
             String[] userInput = result.get().split(":", 2);
             System.out.println(userInput);
+
             try {
                 if (userInput.length == 2) {
                     int port = Integer.parseInt(userInput[1]);
-                    //  getClient = new Client(userInput[0], port);
+                    client = new MyClient(port, userInput[0] , name, this);
                     break;
                 }
                 if (userInput.length == 1) {
                     int port = Integer.parseInt(userInput[0]);
-                    // Create No ip Client
+                    server = new MyServer(port, name, this);
                     break;
                 }
             } catch (NumberFormatException ignore) {
@@ -85,15 +90,7 @@ public class MyClientUI extends Application {
             alert.showAndWait();
         }
 
-        TextInputDialog remoteNameSupplier = new TextInputDialog("Your Name");
-        remoteNameSupplier.setTitle("Messenger");
-        remoteNameSupplier.setHeaderText("Enter name");
-        remoteNameSupplier.setContentText("Please enter your name");
-        String name = "";
-        var result = remoteNameSupplier.showAndWait();
-        if (result.isPresent()) {
-            name = result.get();
-        }
+
 
 
 

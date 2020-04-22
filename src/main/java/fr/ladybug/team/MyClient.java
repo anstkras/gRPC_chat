@@ -32,7 +32,7 @@ public class MyClient {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                parent.addMessage(note.getName(), "", note.getText()));
+                                parent.addMessage(note.getName(), "", note.getText());
                             }
                         });
                     }

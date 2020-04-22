@@ -25,9 +25,13 @@ public class MyClientUI extends Application {
     private static final int MIN_SCREEN_WIDTH = 100;
 
     private MyClient client;
+    private static MyServer myServer;
     private ObservableList<Object> dataSupplier;
 
     public static void main(String[] args) {
+        if (args.length == 2) { // we are server
+            myServer = new MyServer(Integer.parseInt(args[0]), args[1]);
+        }
         launch(args);
     }
 
@@ -36,6 +40,11 @@ public class MyClientUI extends Application {
     }
 
     public void sendMessage(String message) {
+        if (client != null) {
+            client.sendMessage(message);
+        } else if (myServer != null) {
+            myServer.sendMessage(message);
+        }
     }
 
     @Override
@@ -116,6 +125,5 @@ public class MyClientUI extends Application {
         primaryStage.setMinHeight(MIN_SCREEN_HEIGHT);
         primaryStage.setMinWidth(MIN_SCREEN_WIDTH);
         primaryStage.show();
-
     }
 }

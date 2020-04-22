@@ -1,22 +1,17 @@
 package fr.ladybug.team;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import javax.swing.filechooser.FileView;
 
 public class MyClientUI extends Application {
     private static final int BASE_SCREEN_WIDTH = 200;
@@ -26,6 +21,7 @@ public class MyClientUI extends Application {
 
     private MyClient client;
     private static MyServer myServer;
+    private ObservableList<Object> dataSupplier;
 
     public static void main(String[] args) {
         if (args.length == 2) { // we are server
@@ -34,16 +30,22 @@ public class MyClientUI extends Application {
         launch(args);
     }
 
+    public void addMessage(String name, String time, String text) {
+        dataSupplier.addAll("Name: " + name + "\nTime: " + time + "\n" + text);
+    }
+
+    public void sendMessage(String message) {
+    }
+
     @Override
     public void start(Stage primaryStage) {
-        var dataSupplier = FXCollections.observableArrayList();
+        dataSupplier = FXCollections.observableArrayList();
         var listView = new ListView<>(dataSupplier);
 
         final TextField comment = new TextField();
         comment.setPromptText("Enter your comment.");
         comment.setOnAction(actionEvent -> {
-            System.out.println(comment.getText());
-            dataSupplier.addAll(comment.getText());
+            sendMessage(comment.getText());
             comment.setText("");
         });
 

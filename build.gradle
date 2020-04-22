@@ -60,7 +60,7 @@ task clientJar(dependsOn: classes, type: Jar) {
     }
 }
 
-mainClassName = "fr.ladybug.team.client.MyClientUI"
+mainClassName = "fr.ladybug.team.MyClientUI"
 
 build {
     dependsOn clientJar

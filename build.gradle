@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.7'
     id 'com.google.protobuf' version '0.8.8'
 }
 
@@ -11,6 +13,12 @@ repositories {
 def grpcVersion = '1.28.1'
 def protobufVersion = '3.11.0'
 def protocVersion = protobufVersion
+
+
+javafx {
+    version = "12"
+    modules = [ 'javafx.controls' ]
+}
 
 dependencies {
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
@@ -42,4 +50,29 @@ sourceSets {
 
 }
 
+task clientJar(dependsOn: classes, type: Jar) {
+    archiveBaseName = "MyClientUI"
+    from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 
+    manifest {
+        attributes("Main-Class": "fr.ladybug.team.MyClientUI")
+    }
+}
+
+task serverJar(dependsOn: classes, type: Jar) {
+    archiveBaseName = "MyServer"
+    from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+
+    manifest {
+        attributes("Main-Class": "fr.ladybug.team.MyServer")
+    }
+}
+
+mainClassName = "fr.ladybug.team.client.MyClientUI"
+
+build {
+    dependsOn clientJar
+    dependsOn serverJar
+}

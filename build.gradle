@@ -60,19 +60,8 @@ task clientJar(dependsOn: classes, type: Jar) {
     }
 }
 
-task serverJar(dependsOn: classes, type: Jar) {
-    archiveBaseName = "MyServer"
-    from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-
-    manifest {
-        attributes("Main-Class": "fr.ladybug.team.MyServer")
-    }
-}
-
 mainClassName = "fr.ladybug.team.client.MyClientUI"
 
 build {
     dependsOn clientJar
-    dependsOn serverJar
 }

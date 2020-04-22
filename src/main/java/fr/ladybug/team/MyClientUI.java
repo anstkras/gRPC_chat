@@ -25,8 +25,12 @@ public class MyClientUI extends Application {
     private static final int MIN_SCREEN_WIDTH = 100;
 
     private MyClient client;
+    private static MyServer myServer;
 
     public static void main(String[] args) {
+        if (args.length == 2) { // we are server
+            myServer = new MyServer(Integer.parseInt(args[0]), args[1]);
+        }
         launch(args);
     }
 

@@ -10,9 +10,16 @@ import java.util.Scanner;
 public class MyServer {
     private static final Object object = new Object();
     private static StreamObserver<MessageRequest> streamObserver = null;
+    private int port;
+    private String name;
 
-    static public void main(String[] args) throws IOException, InterruptedException {
-        Server server = ServerBuilder.forPort(8080)
+    public MyServer(int port, String name) {
+        this.port = port;
+        this.name = name;
+    }
+
+    public void start() throws IOException {
+        Server server = ServerBuilder.forPort(port)
                 .addService(new GreetingServiceImpl()).build();
         server.start();
         System.out.println("Server started");
@@ -24,16 +31,23 @@ public class MyServer {
                 }
             }
         }
-        while (true) {
-            Scanner scanner = new Scanner(System.in);
-            String message = scanner.nextLine();
-            streamObserver.onNext(MessageRequest.newBuilder()
-                                          .setName("server_name")
-                                          .setText(message)
-                                          .build());
-        }
+
+//        while (true) {
+//            Scanner scanner = new Scanner(System.in);
+//            String message = scanner.nextLine();
+//            streamObserver.onNext(MessageRequest.newBuilder()
+//                                          .setName(name)
+//                                          .setText(message)
+//                                          .build());
+//        }
     }
 
+    public void sendMessage(String message) {
+        streamObserver.onNext(MessageRequest.newBuilder()
+                                      .setName(name)
+                                      .setText(message)
+                                      .build());
+    }
     public static class GreetingServiceImpl extends MessageServiceGrpc.MessageServiceImplBase {
         @Override
         public StreamObserver<MessageRequest> chat(StreamObserver<MessageRequest> responseObserver) {

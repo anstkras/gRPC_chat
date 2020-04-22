@@ -53,7 +53,7 @@ public class MyClientUI extends Application {
         remoteNameSupplier.setTitle("Messenger");
         remoteNameSupplier.setHeaderText("Enter name");
         remoteNameSupplier.setContentText("Please enter your name");
-        String name = "";
+        String name = "anon";
         var result2 = remoteNameSupplier.showAndWait();
         if (result2.isPresent()) {
             name = result2.get();

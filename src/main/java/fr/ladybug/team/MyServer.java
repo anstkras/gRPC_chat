@@ -3,6 +3,8 @@ package fr.ladybug.team;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+import javafx.application.Platform;
+import org.w3c.dom.xpath.XPathResult;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -12,10 +14,12 @@ public class MyServer {
     private static StreamObserver<MessageRequest> streamObserver = null;
     private int port;
     private String name;
+    MyClientUI parent;
 
-    public MyServer(int port, String name) {
+    public MyServer(int port, String name, MyClientUI parent) {
         this.port = port;
         this.name = name;
+        this.parent = parent;
     }
 
     public void start() throws IOException {
@@ -31,15 +35,6 @@ public class MyServer {
                 }
             }
         }
-
-//        while (true) {
-//            Scanner scanner = new Scanner(System.in);
-//            String message = scanner.nextLine();
-//            streamObserver.onNext(MessageRequest.newBuilder()
-//                                          .setName(name)
-//                                          .setText(message)
-//                                          .build());
-//        }
     }
 
     public void sendMessage(String message) {
@@ -48,7 +43,7 @@ public class MyServer {
                                       .setText(message)
                                       .build());
     }
-    public static class GreetingServiceImpl extends MessageServiceGrpc.MessageServiceImplBase {
+    public class GreetingServiceImpl extends MessageServiceGrpc.MessageServiceImplBase {
         @Override
         public StreamObserver<MessageRequest> chat(StreamObserver<MessageRequest> responseObserver) {
             synchronized (object) {
@@ -59,12 +54,16 @@ public class MyServer {
             return new StreamObserver<>() {
                 @Override
                 public void onNext(MessageRequest note) {
-                    System.out.println(note.getText());
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            parent.addMessage(note.getName(), "", note.getText());
+                        }
+                    });
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    //logger.log(Level.WARNING, "routeChat cancelled");
                 }
 
                 @Override

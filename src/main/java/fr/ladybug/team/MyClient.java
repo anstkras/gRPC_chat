@@ -2,6 +2,7 @@ package fr.ladybug.team;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.stub.StreamObserver;
 
 import java.util.Scanner;
 
@@ -11,19 +12,33 @@ public class MyClient {
                 .usePlaintext()
                 .build();
 
-        MessageServiceGrpc.MessageServiceBlockingStub stub =
-                MessageServiceGrpc.newBlockingStub(channel);
+        MessageServiceGrpc.MessageServiceStub stub =
+                MessageServiceGrpc.newStub(channel);
+
+        StreamObserver<MessageRequest> chat = stub.chat(
+                new StreamObserver<>() {
+                    @Override
+                    public void onNext(MessageRequest note) {
+                        System.out.println(note.getText());
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        //logger.log(Level.WARNING, "routeChat cancelled");
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+                });
         while (true) {
             Scanner scanner = new Scanner(System.in);
             String message = scanner.nextLine();
-            MessageResponse messageResponse = stub.greeting(
-                    MessageRequest.newBuilder()
-                            .setName("Lady Bug")
-                            .setText(message)
-                            .build());
-
-            System.out.println(messageResponse);
+            chat.onNext(MessageRequest.newBuilder()
+                                .setName("client_name")
+                                .setText(message)
+                                .build());
         }
-       // channel.shutdown();
     }
 }
+

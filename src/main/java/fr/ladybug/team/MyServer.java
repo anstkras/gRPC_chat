@@ -5,29 +5,59 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 public class MyServer {
-    static public void main(String [] args) throws IOException, InterruptedException {
+    private static final Object object = new Object();
+    private static StreamObserver<MessageRequest> streamObserver = null;
+
+    static public void main(String[] args) throws IOException, InterruptedException {
         Server server = ServerBuilder.forPort(8080)
                 .addService(new GreetingServiceImpl()).build();
-
-        System.out.println("Starting server...");
         server.start();
-        System.out.println("Server started!");
-        server.awaitTermination();
+        System.out.println("Server started");
+
+        while (true) {
+            synchronized (object) {
+                if (streamObserver != null) {
+                    break;
+                }
+            }
+        }
+        while (true) {
+            Scanner scanner = new Scanner(System.in);
+            String message = scanner.nextLine();
+            streamObserver.onNext(MessageRequest.newBuilder()
+                                          .setName("server_name")
+                                          .setText(message)
+                                          .build());
+        }
     }
 
     public static class GreetingServiceImpl extends MessageServiceGrpc.MessageServiceImplBase {
         @Override
-        public void greeting(MessageRequest request, StreamObserver<MessageResponse> responseObserver) {
-            System.out.println(request);
+        public StreamObserver<MessageRequest> chat(StreamObserver<MessageRequest> responseObserver) {
+            synchronized (object) {
+                if (streamObserver == null) {
+                    streamObserver = responseObserver;
+                }
+            }
+            return new StreamObserver<>() {
+                @Override
+                public void onNext(MessageRequest note) {
+                    System.out.println(note.getText());
+                }
 
-            String greeting = "Hello there, " + request.getName();
+                @Override
+                public void onError(Throwable t) {
+                    //logger.log(Level.WARNING, "routeChat cancelled");
+                }
 
-            MessageResponse response = MessageResponse.newBuilder().setGreeting(greeting).build();
-
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
+                @Override
+                public void onCompleted() {
+                    responseObserver.onCompleted();
+                }
+            };
         }
     }
 }

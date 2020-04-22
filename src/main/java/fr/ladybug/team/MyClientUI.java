@@ -15,6 +15,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 
 public class MyClientUI extends Application {
     private static final int BASE_SCREEN_WIDTH = 200;
@@ -79,9 +81,10 @@ public class MyClientUI extends Application {
                 if (userInput.length == 1) {
                     int port = Integer.parseInt(userInput[0]);
                     server = new MyServer(port, name, this);
+                    server.start();
                     break;
                 }
-            } catch (NumberFormatException ignore) {
+            } catch (NumberFormatException | IOException ignore) {
             }
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Input");

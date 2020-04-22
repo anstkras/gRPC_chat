@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import org.w3c.dom.xpath.XPathResult;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class MyServer {
@@ -38,10 +39,15 @@ public class MyServer {
     }
 
     public void sendMessage(String message) {
-        streamObserver.onNext(MessageRequest.newBuilder()
-                                      .setName(name)
-                                      .setText(message)
-                                      .build());
+        System.out.println(message);
+        System.out.println(name);
+        var note = MessageRequest.newBuilder()
+                .setName(name)
+                .setText(message)
+                .setTime(LocalDateTime.now().toString())
+                .build();
+        parent.addMessage(note.getName(), note.getTime(), note.getText());
+        streamObserver.onNext(note);
     }
     public class GreetingServiceImpl extends MessageServiceGrpc.MessageServiceImplBase {
         @Override
@@ -57,7 +63,7 @@ public class MyServer {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            parent.addMessage(note.getName(), "", note.getText());
+                            parent.addMessage(note.getName(), note.getTime(), note.getText());
                         }
                     });
                 }

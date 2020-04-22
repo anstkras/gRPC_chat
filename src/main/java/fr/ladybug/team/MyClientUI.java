@@ -35,6 +35,11 @@ public class MyClientUI extends Application {
     }
 
     public void sendMessage(String message) {
+        if (client != null) {
+            client.sendMessage(message);
+        } else if (myServer != null) {
+            myServer.sendMessage(message);
+        }
     }
 
     @Override
@@ -67,6 +72,5 @@ public class MyClientUI extends Application {
         primaryStage.setMinHeight(MIN_SCREEN_HEIGHT);
         primaryStage.setMinWidth(MIN_SCREEN_WIDTH);
         primaryStage.show();
-
     }
 }

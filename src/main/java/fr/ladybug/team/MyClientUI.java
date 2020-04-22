@@ -1,16 +1,21 @@
 package fr.ladybug.team;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 
 public class MyClientUI extends Application {
@@ -35,6 +40,54 @@ public class MyClientUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        TextInputDialog remoteAddressSupplier = new TextInputDialog("ip.ad.dr.re:port");
+        remoteAddressSupplier.setTitle("Messenger");
+        remoteAddressSupplier.setHeaderText("Enter address and port");
+        remoteAddressSupplier.setContentText("Please either address:port or port");
+
+        MyClient getClient;
+        while (true) {
+            var result = remoteAddressSupplier.showAndWait();
+
+            if (!result.isPresent()) {
+                Platform.exit();
+                return;
+            }
+
+            String[] userInput = result.get().split(":", 2);
+            System.out.println(userInput);
+            try {
+                if (userInput.length == 2) {
+                    int port = Integer.parseInt(userInput[1]);
+                    //  getClient = new Client(userInput[0], port);
+                    break;
+                }
+                if (userInput.length == 1) {
+                    int port = Integer.parseInt(userInput[0]);
+                    // Create No ip Client
+                    break;
+                }
+            } catch (NumberFormatException ignore) {
+            }
+            var alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Input");
+            alert.setHeaderText("Incorrect");
+            alert.setContentText("Please follow the following pattern: host:port");
+            alert.showAndWait();
+        }
+
+        TextInputDialog remoteNameSupplier = new TextInputDialog("Your Name");
+        remoteNameSupplier.setTitle("Messenger");
+        remoteNameSupplier.setHeaderText("Enter name");
+        remoteNameSupplier.setContentText("Please enter your name");
+        String name = "";
+        var result = remoteNameSupplier.showAndWait();
+        if (result.isPresent()) {
+            name = result.get();
+        }
+
+
+
         dataSupplier = FXCollections.observableArrayList();
         var listView = new ListView<>(dataSupplier);
 

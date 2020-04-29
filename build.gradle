@@ -9,30 +9,13 @@ repositories {
     mavenLocal()
 }
 
-def grpcVersion = '1.28.1'
-
 javafx {
     version = "12"
     modules = [ 'javafx.controls' ]
 }
 
 dependencies {
-    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
-    implementation "io.grpc:grpc-stub:${grpcVersion}"
-    compileOnly "javax.annotation:javax.annotation-api:1.2"
     compile group: 'com.rabbitmq', name: 'amqp-client', version: '5.9.0'
-
-    runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs 'build/generated/source/proto/main/grpc'
-            srcDirs 'build/generated/source/proto/main/java'
-        }
-    }
-
 }
 
 task clientJar(dependsOn: classes, type: Jar) {

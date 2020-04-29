@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.7'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 repositories {
@@ -15,21 +15,20 @@ javafx {
 }
 
 dependencies {
-
     compile group: 'com.rabbitmq', name: 'amqp-client', version: '5.9.0'
 }
 
 task clientJar(dependsOn: classes, type: Jar) {
-    archiveBaseName = "MyClientUI"
+    archiveBaseName = "GUI"
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 
     manifest {
-        attributes("Main-Class": "fr.ladybug.team.MyClientUI")
+        attributes("Main-Class": "fr.ladybug.team.GUI")
     }
 }
 
-mainClassName = "fr.ladybug.team.MyClientUI"
+mainClassName = "fr.ladybug.team.GUI"
 
 build {
     dependsOn clientJar

@@ -15,9 +15,9 @@ public class RabbitClient {
 
     Channel channel;
     Connection connection;
-    GUI GUI;
+    GUI gui;
 
-    RabbitClient(String host, GUI GUI) throws IOException, TimeoutException {
+    RabbitClient(String host, GUI gui) throws IOException, TimeoutException {
         isClosed = false;
 
         var factory = new ConnectionFactory();
@@ -25,7 +25,7 @@ public class RabbitClient {
 
         connection = factory.newConnection();
         channel = connection.createChannel();
-        this.GUI = GUI;
+        this.gui = gui;
 
     }
 
@@ -40,6 +40,7 @@ public class RabbitClient {
     public void messageReceived(String message, String targetName) {
         System.out.println(String.format("We've got a %s into %s",
                 message, targetName));
+        gui.addMessage(targetName, message);
     }
 
     public void subscribe(String targetName) throws IOException {
@@ -62,11 +63,11 @@ public class RabbitClient {
     }
 
     public static void main(String[] argv) throws Exception {
-        RabbitClient server = new RabbitClient("localhost", null);
-        server.subscribe("@navalny");
-        server.subscribe("@kerenskiy");
-        server.sendMessage("Hello", "@navalny");
-        server.sendMessage("Hellod gds fdf", "@kerenskiy");
+//        RabbitClient server = new RabbitClient("localhost", null);
+//        server.subscribe("@navalny");
+//        server.subscribe("@kerenskiy");
+//        server.sendMessage("Hello", "@navalny");
+//        server.sendMessage("Hellod gds fdf", "@kerenskiy");
 
     }
 }

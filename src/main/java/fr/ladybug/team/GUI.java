@@ -11,7 +11,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.TimeoutException;
 
 
 public class GUI extends Application {
@@ -24,20 +26,22 @@ public class GUI extends Application {
     private TabPane tabPane;
     private HashMap<String, Tab> channelMap;
 
+    private RabbitClient client;
+
     public static void main(String[] args) {
         launch(args);
     }
 
-    public void addMessage(String channelName, String name, String time, String text) {
-        dataSupplier.get(channelName).addAll("Name: " + name + "\nTime: " + time + "\n" + text);
+    public void addMessage(String channelName, String text) {
+        dataSupplier.get(channelName).addAll(text);
     }
 
     public void sendMessage(String message, String channelName) {
-//        if (client != null) {
-//            client.sendMessage(message);
-//        } else if (server != null) {
-//            server.sendMessage(message);
-//        }
+        try {
+            client.sendMessage(message, channelName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void joinChannel(String name) {
@@ -71,7 +75,13 @@ public class GUI extends Application {
 
         Tab tab = new Tab(name, message);
         channelMap.put(name, tab);
+        try {
+            client.subscribe(name);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         tabPane.getTabs().addAll(tab);
+
     }
 
     @Override
@@ -123,6 +133,13 @@ public class GUI extends Application {
 //            alert.showAndWait();
 //        }
 
+        try {
+            client = new RabbitClient("localhost", this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
         channelMap = new HashMap();
         tabPane = new TabPane();
 
@@ -156,5 +173,12 @@ public class GUI extends Application {
         primaryStage.setMinHeight(MIN_SCREEN_HEIGHT);
         primaryStage.setMinWidth(MIN_SCREEN_WIDTH);
         primaryStage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+//        System.err.println("Closing...");
+        client.close();
     }
 }

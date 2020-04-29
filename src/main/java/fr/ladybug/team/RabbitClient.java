@@ -39,8 +39,8 @@ public class RabbitClient {
     }
 
     public void messageReceived(String message, String targetName) {
-        System.out.println(String.format("We've got a %s into %s",
-                message, targetName));
+//        System.out.println(String.format("We've got a %s into %s",
+//                message, targetName));
         Platform.runLater(() -> {
             gui.addMessage(targetName, message);
         });

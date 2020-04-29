@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.7'
-    id 'com.google.protobuf' version '0.8.8'
 }
 
 repositories {
@@ -11,9 +10,6 @@ repositories {
 }
 
 def grpcVersion = '1.28.1'
-def protobufVersion = '3.11.0'
-def protocVersion = protobufVersion
-
 
 javafx {
     version = "12"
@@ -24,20 +20,9 @@ dependencies {
     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     compileOnly "javax.annotation:javax.annotation-api:1.2"
-
-    implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+    compile group: 'com.rabbitmq', name: 'amqp-client', version: '5.9.0'
 
     runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
-}
-
-protobuf {
-    protoc { artifact = "com.google.protobuf:protoc:${protocVersion}" }
-    plugins {
-        grpc { artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}" }
-    }
-    generateProtoTasks {
-        all()*.plugins { grpc {} }
-    }
 }
 
 sourceSets {

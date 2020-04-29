@@ -38,9 +38,9 @@ public class MyClientUI extends Application {
 
     public void sendMessage(String message) {
         if (client != null) {
-            client.sendMessage(message);
+          //  client.sendMessage(message);
         } else if (server != null) {
-            server.sendMessage(message);
+          //  server.sendMessage(message);
         }
     }
 
@@ -75,16 +75,16 @@ public class MyClientUI extends Application {
             try {
                 if (userInput.length == 2) {
                     int port = Integer.parseInt(userInput[1]);
-                    client = new MyClient(port, userInput[0] , name, this);
+                   // client = new MyClient(port, userInput[0] , name, this);
                     break;
                 }
                 if (userInput.length == 1) {
                     int port = Integer.parseInt(userInput[0]);
-                    server = new MyServer(port, name, this);
-                    server.start();
+                   // server = new MyServer(port, name, this);
+                   // server.start();
                     break;
                 }
-            } catch (NumberFormatException | IOException ignore) {
+            } catch (NumberFormatException e) {
             }
             var alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Input");

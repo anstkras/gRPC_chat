@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
@@ -56,24 +57,23 @@ public class GUI extends Application {
             message.setText("");
         });
 
+        var supplier = FXCollections.observableArrayList();
+        var listView = new ListView<>(supplier);
+        dataSupplier.put(name, supplier);
 
-//        var supplier = FXCollections.observableArrayList();
-//        var listView = new ListView<>(supplier);
-//        dataSupplier.put(name, supplier);
+        GridPane pane = new GridPane();
+        GridPane.setConstraints(message, 0, 0);
+        GridPane.setConstraints(listView, 0, 1);
+        pane.setAlignment(Pos.TOP_CENTER);
 
-//        GridPane pane = new GridPane();
-//        GridPane.setConstraints(message, 0, 0);
-//        GridPane.setConstraints(listView, 0, 1);
-//        pane.setAlignment(Pos.TOP_CENTER);
+        ColumnConstraints cc = new ColumnConstraints();
+        cc.setHgrow(Priority.ALWAYS);
+        pane.getColumnConstraints().add(cc);
 
-//        ColumnConstraints cc = new ColumnConstraints();
-//        cc.setHgrow(Priority.ALWAYS);
-//        pane.getColumnConstraints().add(cc);
+        pane.getChildren().add(message);
+        pane.getChildren().add(listView);
 
-//        pane.getChildren().add(message);
-//        pane.getChildren().add(listView);
-
-        Tab tab = new Tab(name, message);
+        Tab tab = new Tab(name, pane);
         channelMap.put(name, tab);
         try {
             client.subscribe(name);
@@ -140,7 +140,8 @@ public class GUI extends Application {
         } catch (TimeoutException e) {
             e.printStackTrace();
         }
-        channelMap = new HashMap();
+        channelMap = new HashMap<>();
+        dataSupplier = new HashMap<>();
         tabPane = new TabPane();
 
         final TextField channelName = new TextField();
@@ -152,19 +153,20 @@ public class GUI extends Application {
             joinChannel(channelName.getText());
             channelName.setText("");
         });
+        HBox channel = new HBox();
+        channel.getChildren().addAll(channelName, channelButton);
 
         GridPane pane = new GridPane();
-        GridPane.setConstraints(channelName, 0, 0);
-        GridPane.setConstraints(channelButton, 1, 0);
+        GridPane.setConstraints(channel, 0, 0);
         GridPane.setConstraints(tabPane, 0, 1);
         pane.setAlignment(Pos.TOP_CENTER);
 
         ColumnConstraints cc = new ColumnConstraints();
         cc.setHgrow(Priority.ALWAYS);
+        cc.setFillWidth(true);
         pane.getColumnConstraints().add(cc);
 
-        pane.getChildren().add(channelName);
-        pane.getChildren().add(channelButton);
+        pane.getChildren().add(channel);
         pane.getChildren().add(tabPane);
 
         Scene scene = new Scene(pane, BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT);

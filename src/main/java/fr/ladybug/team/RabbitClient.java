@@ -4,6 +4,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DeliverCallback;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -40,7 +41,9 @@ public class RabbitClient {
     public void messageReceived(String message, String targetName) {
         System.out.println(String.format("We've got a %s into %s",
                 message, targetName));
-        gui.addMessage(targetName, message);
+        Platform.runLater(() -> {
+            gui.addMessage(targetName, message);
+        });
     }
 
     public void subscribe(String targetName) throws IOException {

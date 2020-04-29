@@ -9,23 +9,23 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
-public class RabbitServer {
-
-//    private final static String QUEUE_NAME = "hello";
+public class RabbitClient {
 
     boolean isClosed;
 
     Channel channel;
     Connection connection;
+    GUI GUI;
 
-    RabbitServer() throws IOException, TimeoutException {
+    RabbitClient(String host, GUI GUI) throws IOException, TimeoutException {
         isClosed = false;
 
         var factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost(host);
 
         connection = factory.newConnection();
         channel = connection.createChannel();
+        this.GUI = GUI;
 
     }
 
@@ -62,7 +62,7 @@ public class RabbitServer {
     }
 
     public static void main(String[] argv) throws Exception {
-        RabbitServer server = new RabbitServer();
+        RabbitClient server = new RabbitClient("localhost", null);
         server.subscribe("@navalny");
         server.subscribe("@kerenskiy");
         server.sendMessage("Hello", "@navalny");

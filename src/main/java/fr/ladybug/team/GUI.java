@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 
 
-public class MyClientUI extends Application {
+public class GUI extends Application {
     private static final int BASE_SCREEN_WIDTH = 200;
     private static final int BASE_SCREEN_HEIGHT = 400;
     private static final int MIN_SCREEN_HEIGHT = 200;

@@ -15,6 +15,7 @@ javafx {
 }
 
 dependencies {
+
     compile group: 'com.rabbitmq', name: 'amqp-client', version: '5.9.0'
 }
 
